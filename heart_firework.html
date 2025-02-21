@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trái Tim Pháo Hoa Động</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+            margin: 0;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="heartCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('heartCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        const heartShape = (x, y) => Math.pow(x, 2) + Math.pow(y - Math.pow(x, 2 / 3), 2) <= 1;
+
+        function createParticles() {
+            particles.length = 0;
+            for (let i = 0; i < 1000; i++) {
+                const x = (Math.random() * 2 - 1) * 1.5;
+                const y = (Math.random() * 2 - 1) * 1.5;
+                if (heartShape(x, y)) {
+                    particles.push({
+                        x: x * 150 + canvas.width / 2,
+                        y: -y * 150 + canvas.height / 2,
+                        vx: (Math.random() - 0.5) * 2,
+                        vy: (Math.random() - 0.5) * 2,
+                        color: `rgba(255, ${Math.random() * 100 + 50}, ${Math.random() * 50 + 50}, ${Math.random() * 0.8 + 0.2})`,
+                        size: Math.random() * 4
+                    });
+                }
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.fill();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        createParticles();
+        animate();
+    </script>
+</body>
+</html>
